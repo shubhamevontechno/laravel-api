@@ -20,8 +20,21 @@ class AccountController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $accounts = Account::all();
+            $accountsWithImages = $accounts->map(function ($account) {
+                // Append the image URL to the account data
+                $account['logo'] = asset("storage/{$account->logo}");
+                return $account;
+            });
+
+            return response()->json(['status' => 200, 'accounts' => $accountsWithImages]);
+        } catch (\Exception $e) {
+            Log::error("Error getting accounts: " . $e->getMessage());
+            return response()->json(['status' => 500, 'message' => 'An error occurred while getting the accounts'], 500);
+        }
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -76,11 +89,6 @@ class AccountController extends Controller
         }
     }
 
-
-    public function check(){
-
-        dd("kskdsdf");
-    }
     /**
      * Display the specified resource.
      *
@@ -123,6 +131,14 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $account = Account::findOrFail($id)->first();
+            $account->delete();
+            return response()->json(['status' => 200, 'message' => 'Account has been moved to trash'], 201);
+        } catch (\Exception $e) {
+            Log::error("message from user deleting" . $e->getMessage());
+            return response()->json(['status' => 500, 'message' => 'An error occurred while deteing the account'], 500);
+        }
+
     }
 }

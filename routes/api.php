@@ -26,7 +26,6 @@ use App\Http\Controllers\AccountController;
 
     Route::post('login', [AuthController::class,'login']);
 
-
     Route::group(['middleware'=>'api'], function(){
         Route::post('register', [AuthController::class,'register']);
         Route::post('logout', [AuthController::class,'logout']);
@@ -34,5 +33,5 @@ use App\Http\Controllers\AccountController;
         Route::post('me', [AuthController::class,'me']);
         Route::resource('user_info', UserInfoController::class);
         Route::resource('expense', ExpenseController::class);
-        Route::post('bank-account', [AccountController::class,'store']);
+        Route::resource('bank-account', AccountController::class);
     });
