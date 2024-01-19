@@ -6,7 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserInfoController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\AccountController;
-
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,4 +34,5 @@ use App\Http\Controllers\AccountController;
         Route::resource('user_info', UserInfoController::class);
         Route::resource('expense', ExpenseController::class);
         Route::resource('bank-account', AccountController::class);
+        Route::resource('category', CategoryController::class);
     });
