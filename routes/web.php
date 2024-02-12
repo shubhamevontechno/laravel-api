@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StepController;
+use App\Http\Controllers\Web\StepFormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,4 +15,7 @@ use App\Http\Controllers\StepController;
 |
 */
 Route::resource('/anc', StepController::class);
+Route::resource('step-form', StepFormController::class);
+Route::get('/second-form/{id}', [StepFormController::class, 'second_form']);
+
 
