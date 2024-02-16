@@ -17,5 +17,5 @@ use App\Http\Controllers\Web\StepFormController;
 Route::resource('/anc', StepController::class);
 Route::resource('step-form', StepFormController::class);
 Route::get('/second-form/{id}', [StepFormController::class, 'second_form']);
-
+Route::post('/second-step-store',[StepFormController::class, 'store_second_form'])->name('second-step-store');
 
