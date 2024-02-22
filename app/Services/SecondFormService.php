@@ -31,6 +31,7 @@ class SecondFormService{
         if ($RegistrationProcess) {
             $RegistrationProcess->update(['completed' => true]);
         }
+        return $memberId;
     }
 }
 ?>

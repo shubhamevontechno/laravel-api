@@ -9,6 +9,8 @@ use App\Services\SecondFormService;
 use App\Models\FirstForm;
 use App\Models\SecondForm;
 use App\Models\RegistrationProcess;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class StepFormController extends Controller
 {
@@ -19,18 +21,38 @@ class StepFormController extends Controller
         $this->secondFormService    = $secondFormService;
     }
 
-    private function checkStepCompletion($id, $stepNumber, $formModel)
-    {
-        $form = FirstForm::findOrFail($id);
+    public function second_form_index($id){
+        $get_id = $id;
+        // Proceed to show the second form
+        return view('step_second', compact('get_id'));
+    }
 
-        $completedSteps = $form->registrationProgresses->pluck('step_number', 'completed')->toArray();
-        // dd($completedSteps);
-        for ($i = 1; $i < $stepNumber; $i++) {
-            if (!in_array($i, $completedSteps)) {
-                return false;
+    public function third_form_index($id){
+        $get_id = $id;
+        // Proceed to show the second form
+        return view('step_third', compact('get_id'));
+    }
+    private function checkStepCompletion($id, $stepNumber, $formModel): ?RedirectResponse
+    {
+        $form = $formModel::findOrFail($id);
+
+        $stepProgress = $form->registrationProgresses->where('step_number', $stepNumber)->first();
+
+        if (!$stepProgress) {
+            // If no registration progress record exists for the step, redirect to the first step form
+            return redirect()->route('first-step-form')->with('error', 'Please start from the first step.');
+        }
+        if (!$stepProgress->completed) {
+            if ($stepNumber == 1) {
+                return redirect()->route('step-form.index')->with('error', 'Please complete the first step before proceeding.');
+            } elseif ($stepNumber == 2) {
+                return redirect()->route('second-form-index', ['id' => $id])->with('error', 'Please complete the third step before proceeding.');
+            } elseif ($stepNumber == 3) {
+                return redirect()->route('third-form-index', ['id' => $id])->with('error', 'Please complete the third step before proceeding.');
             }
         }
-        return true;
+
+        return null;
     }
 
     /**
@@ -45,18 +67,33 @@ class StepFormController extends Controller
 
     public function second_form($id)
     {
-        if (!$this->checkStepCompletion($id, 1, FirstForm::class)) {
-            // First step is not completed, so redirect back or show an error message
-            return redirect()->route('step-form.index')->with('error', 'Please complete the first step before accessing the second step.');
+        $redirect = $this->checkStepCompletion($id, 1, FirstForm::class);
+        if ($redirect) {
+            return $redirect;
         }
 
-        if ($this->checkStepCompletion($id, 2, SecondForm::class)) {
-            // Second step is already completed, so redirect back or show an error message
-            return redirect()->route('step-form.index')->with('error', 'You have already completed the second step.');
+        $redirect = $this->checkStepCompletion($id, 2, FirstForm::class);
+        if ($redirect) {
+            return $redirect;
         }
-        $get_id = $id;
-        // Proceed to show the second form
-        return view('step_second', compact('get_id'));
+
+        $redirect = $this->checkStepCompletion($id, 3, FirstForm::class);
+        if ($redirect) {
+
+            return $redirect;
+        }
+    }
+
+    public function upload(Request $request)
+    {
+
+        $image = $request->file('image');
+        $imageName = time().'.'.$image->getClientOriginalExtension();
+        $image->storeAs('public/images', $imageName);
+
+        $imageUrl = Storage::url('images/'.$imageName);
+        $image = asset("storage/{$imageUrl}");
+        return response()->json(['image_url' => $imageUrl]);
     }
 
     /**
@@ -69,7 +106,7 @@ class StepFormController extends Controller
         //
     }
 
-    /**
+    /**+
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -90,8 +127,9 @@ class StepFormController extends Controller
     public function store_second_form(Request $request){
         try {
             $validatedData = $this->secondFormService->validateFormData($request->all());
-            $this->secondFormService->processForm($validatedData);
-            return response()->json(['status' => 'success', 'message' => 'Second form submitted successfully']);
+            $get_last_insert_id = $this->secondFormService->processForm($validatedData);
+
+            return response()->json(['status' => 'success', 'message' => 'Second form submitted successfully','lastInsertedId' => $get_last_insert_id]);
         } catch (\Illuminate\Validation\ValidationException $ex) {
             return response()->json(['errors' => $ex->errors()], 422);
         } catch (\Exception $ex) {
