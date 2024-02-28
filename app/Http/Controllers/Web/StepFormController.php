@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\FirstFormService;
 use App\Services\SecondFormService;
+use App\Services\ThirdFormService;
 use App\Models\FirstForm;
 use App\Models\SecondForm;
 use App\Models\RegistrationProcess;
@@ -16,9 +17,11 @@ class StepFormController extends Controller
 {
     protected $firstFormService;
     protected $secondFormService;
-    public function __construct(FirstFormService $firstFormService, SecondFormService $secondFormService){
+    protected $thirdFormService;
+    public function __construct(FirstFormService $firstFormService, SecondFormService $secondFormService,  ThirdFormService $thirdFormService){
         $this->firstFormService     = $firstFormService;
         $this->secondFormService    = $secondFormService;
+        $this->thirdFormService    = $thirdFormService;
     }
 
     public function second_form_index($id){
@@ -137,6 +140,19 @@ class StepFormController extends Controller
         }
     }
 
+    public function store_third_form(Request $request){
+        try {
+            $validatedData = $this->thirdFormService->validateFormData($request->all());
+            $get_last_insert_id = $this->thirdFormService->processForm($validatedData);
+
+            return response()->json(['status' => 'success', 'message' => 'Third form submitted successfully','lastInsertedId' => $get_last_insert_id]);
+        } catch (\Illuminate\Validation\ValidationException $ex) {
+            return response()->json(['errors' => $ex->errors()], 422);
+        } catch (\Exception $ex) {
+            return response()->json(['errors' => ['integrity_constraint_violation' => [$ex->getMessage()]]], 500);
+        }
+    }
+
     /**
      * Display the specified resource.
      *
@@ -166,7 +182,7 @@ class StepFormController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
     }
@@ -180,5 +196,18 @@ class StepFormController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function delete_image(Request $request){
+        $imageUrl = $request->input('image_url');
+        $imageName = basename($imageUrl);
+        $imagePath = 'public/images/' . $imageName;
+
+        if (Storage::exists($imagePath)) {
+            Storage::delete($imagePath);
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['error' => 'Image not found'], 404);
     }
 }

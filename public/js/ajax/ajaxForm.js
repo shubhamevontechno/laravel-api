@@ -14,6 +14,7 @@ function submitAjaxForm(formId, successCallback, errorCallback) {
       method: $(this).attr("method"), // Use form's method attribute as HTTP method
       data: formData,
       success: function (response) {
+        console.log('get res',response);
         // Handle successful response
         // Re-enable the submit button and remove loading spinner after 2 seconds
         setTimeout(function () {

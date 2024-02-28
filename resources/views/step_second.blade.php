@@ -41,7 +41,12 @@
     <script src="{{ asset('js/ajax/ajaxForm.js') }}"></script>
     <script src="{{ asset('js/ajax/loadSweetAlertScript.js') }}"></script>
     <script>
-        // Function to display error using SweetAlert
+
+        /*
+        |************************************************|
+        |** Function to display error using SweetAlert **|
+        |************************************************|
+        */
         function displayError(errors) {
             var errorMessage = '';
 
@@ -63,12 +68,38 @@
             }
         }
 
+        /*
+        |************************************************|
+        |* Function to display success using SweetAlert *|
+        |************************************************|
+        */
+        function successMessage(success, redirect) {
+            if(success !==''){
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: success,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function(){
+                    window.location.href = redirect;
+                });
+            }
+        }
+
+        /*
+        |************************************************|
+        |*** Function to insert data to the database ****|
+        |************************************************|
+        */
         submitAjaxForm('#myForm', function(response) {
-            console.log(response);
-            alert(response.message);
             var lastInsertedId = response.lastInsertedId;
             var nextFormUrl = '/second-form/' + lastInsertedId;
-            window.location.href = nextFormUrl;
+
+            loadSweetAlertScript(function() {
+                successMessage(response.message, nextFormUrl);
+            });
+
         }, function(xhr, status, error) {
             var errors = xhr.responseJSON.errors;
             $.each(errors, function(key, value) {
