@@ -209,6 +209,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'Carbon' => Illuminate\Support\Carbon::class,
+
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 

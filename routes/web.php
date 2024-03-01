@@ -14,7 +14,7 @@ use App\Http\Controllers\Web\StepFormController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::resource('/anc', StepController::class);
+Route::resource('/', StepController::class);
 Route::resource('step-form', StepFormController::class);
 Route::get('/second-form/{id}', [StepFormController::class, 'second_form'])->name('second-form');
 Route::get('/second-form-index/{id}', [StepFormController::class, 'second_form_index'])->name('second-form-index');
@@ -23,4 +23,5 @@ Route::post('/delete-image', [StepFormController::class, 'delete_image']);
 Route::post('/upload', [StepFormController::class, 'upload'])->name('upload');
 Route::post('/second-step-store',[StepFormController::class, 'store_second_form'])->name('second-step-store');
 Route::post('/third-step-store',[StepFormController::class, 'store_third_form'])->name('third-step-store');
+Route::get('/search', [StepController::class, 'search'])->name('search');
 

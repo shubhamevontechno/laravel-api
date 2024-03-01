@@ -22,7 +22,8 @@ class StepController extends Controller
 
     public function index()
     {
-        return view('step_first');
+        $getDatas = FirstForm::with('secondForm','thirdForm','registrationProgresses')->get();
+        return view('user_info',compact('getDatas'));
     }
 
     /**
@@ -51,6 +52,14 @@ class StepController extends Controller
         return response()->json(['status'=>HTTP_OK,'message'=>'inserted successfully']);
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->get('query');
+        $results = FirstForm::where('name', 'like', "%$query%")
+                          ->orWhere('email', 'like', "%$query%")
+                          ->limit(5)->get();
+        return response()->json($results);
+    }
     /**
      * Display the specified resource.
      *

@@ -17,6 +17,14 @@ class FirstForm extends Model
         });
     }
 
+    public function secondForm(){
+        return $this->hasOne(SecondForm::class, 'first_form_id');
+    }
+
+    public function thirdForm(){
+        return $this->hasOne(ThirdForm::class, 'first_form_id');
+    }
+
     public function registrationProgresses()
     {
         return $this->hasMany(RegistrationProcess::class);
