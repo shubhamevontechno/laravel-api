@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <style>
         #searchResults {
             position: absolute;
@@ -65,52 +67,95 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
+                <form id="donationForm"  action="{{ route('donation.store') }}" method="post">
                 <div class="modal-body">
-                <form id="feesForm">
-                    <input type="hidden" id="studentCode" name="student_code">
+                    @csrf
+                    <input type="hidden" id="studentCode" name="first_form_id" value="1">
                     <div class="form-group">
-                    <label for="class">Class:</label>
-                    <input type="text" class="form-control" id="class" name="class">
+                        <label for="class">Category Name:</label>
+                        <input type="text" class="form-control" id="category_name" name="category_name">
+                        <span class="text-danger error-message" id="category_name-error"></span>
                     </div>
                     <div class="form-group">
-                    <label for="amount">Amount:</label>
-                    <input type="number" class="form-control" id="amount" name="amount">
+                        <label for="amount">Amount:</label>
+                        <input type="number" class="form-control" id="amount" name="amount">
+                        <span class="text-danger error-message" id="amount-error"></span>
                     </div>
                     <div class="form-group">
-                    <label for="date">Date:</label>
-                    <input type="date" class="form-control" id="date" name="date">
+                        <label for="date">Date:</label>
+                        <input type="date" class="form-control" id="date" name="donation_date">
+                        <span class="text-danger error-message" id="donation_date-error"></span>
+
                     </div>
                     <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea class="form-control" id="description" name="description"></textarea>
+                        <label for="payment_mode">payment_mode:</label>
+                        <input class="form-control" id="payment_mode" name="payment_mode">
+                        <span class="text-danger error-message" id="payment_mode-error"></span>
                     </div>
-                </form>
+                    <div class="form-group">
+                        <input class="form-check-input" type="checkbox" value="true" name="send_email" id="send_email">
+                        <label class="form-check-label" for="send_email">
+                            Send Email
+                        </label>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="submitFees">Submit</button>
+                <button type="submit" class="btn btn-primary" id="submitFees">Submit</button>
                 </div>
+            </form>
             </div>
             </div>
         </div>
 
     </main>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/ajax/searchMember.js') }}"></script>
+<script src="{{ asset('js/ajax/ajaxForm.js') }}"></script>
+<script src="{{ asset('js/ajax/loadSweetAlertScript.js') }}"></script>
 <script>
     var searchUrl = "{{ route('search') }}";
     $(document).on('click', '.payFees', function(e) {
-        e.stopPropagation(); // Prevents closing of suggestions on button click
+        e.stopPropagation();
         var code = $(this).data('code');
         var name = $(this).data('name');
-        // var name = $(this).siblings('span').text(); // Assuming student's name is displayed in a <span> element
-            console.log('show name', name, code);
-        // Populate name and code into the modal
         $('#feesModal').find('#studentCode').val(code);
         $('#feesModal').find('.modal-title').text('Pay Fees for ' + name);
-
-        // Open the modal
         $('#feesModal').modal('show');
+    });
+    /*
+    |************************************************|
+    |* Function to display success using SweetAlert *|
+    |************************************************|
+    */
+    function successMessage(success){
+        if(success !==''){
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Data Uploaded",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    /*
+    |************************************************|
+    |*** Function to insert data to the database ****|
+    |************************************************|
+    */
+    submitAjaxForm('#donationForm', function(response) {
+        $('#donationForm').trigger("reset");
+        loadSweetAlertScript(function() {
+            successMessage(response.message);
+        });
+        $('#feesModal').modal('hide');
+    }, function(xhr, status, error) {
+        var errors = xhr.responseJSON.errors;
+        $.each(errors, function(key, value) {
+            $('#' + key + '-error').text(value[0]);
+        });
     });
 </script>
 </body>

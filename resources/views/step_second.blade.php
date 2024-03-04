@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
+@section('content')
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Second Step Form</title>
-    <!-- Include Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body>
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -37,11 +29,9 @@
             </div>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{{ asset('js/ajax/ajaxForm.js') }}"></script>
     <script src="{{ asset('js/ajax/loadSweetAlertScript.js') }}"></script>
     <script>
-
         /*
         |************************************************|
         |** Function to display error using SweetAlert **|
@@ -112,7 +102,4 @@
             }
         });
     </script>
-
-</body>
-
-</html>
+@endsection()

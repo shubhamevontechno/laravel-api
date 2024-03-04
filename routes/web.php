@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StepController;
 use App\Http\Controllers\Web\StepFormController;
+use App\Http\Controllers\DonationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,4 +25,5 @@ Route::post('/upload', [StepFormController::class, 'upload'])->name('upload');
 Route::post('/second-step-store',[StepFormController::class, 'store_second_form'])->name('second-step-store');
 Route::post('/third-step-store',[StepFormController::class, 'store_third_form'])->name('third-step-store');
 Route::get('/search', [StepController::class, 'search'])->name('search');
+Route::resource('donation', DonationController::class);
 
