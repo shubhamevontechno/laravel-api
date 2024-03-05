@@ -44,7 +44,10 @@ class DonationController extends Controller
     {
         $validated = $request->validated();
         $inserted = $this->donationServices->processForm($request->all());
-        $details =['email'=>'shubham@cmail.com','subject'=>'test email'];
+        $details = [
+            'email' => 'shubham@newcmail.com',
+            'subject' => 'Test array'
+        ];
         if($inserted){
             if($request['send_email']){
                 $sendemail = DonationEmailJob::dispatch($details);

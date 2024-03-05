@@ -32,7 +32,6 @@ class DonationEmailJob implements ShouldQueue
      */
     public function handle()
     {
-        $email = new DonationEmailForQueuing();
-        Mail::to($this->details['email'])->send($email);
+        Mail::to($this->details['email'])->send(new DonationEmailForQueuing($this->details));
     }
 }

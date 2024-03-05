@@ -9,19 +9,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Attachment;
 
 class DonationEmailForQueuing extends Mailable
 {
     use Queueable, SerializesModels;
-
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public $details;
+    public function __construct($details)
     {
-
+        $this->details = $details;
     }
 
     /**
@@ -34,7 +35,7 @@ class DonationEmailForQueuing extends Mailable
 
         return new Envelope(
             from: new Address('shubham@gmail.com', 'Shubham Parashar'),
-             subject: 'abc',
+             subject: $this->details['subject'],
         );
     }
 
@@ -57,6 +58,9 @@ class DonationEmailForQueuing extends Mailable
      */
     public function attachments()
     {
-        return [];
+        return [
+            Attachment::fromPath(asset('assets/pdf/pdf.pdf')),
+
+        ];
     }
 }
