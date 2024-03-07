@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <div class="container mt-4">
         <div class="row justify-content-center">
@@ -19,8 +19,7 @@
                                 <label for="phone">Phone:</label>
                                 <input type="number" class="form-control" id="phone" name="phone">
                                 <span class="text-danger error-message" id="phone-error"></span>
-                                <input type="text" name="first_form_id" id="first_form_id"
-                                    value="{{ $get_id }}">
+                                <input type="text" name="first_form_id" id="first_form_id" value="{{ $get_id }}">
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
@@ -33,10 +32,10 @@
     <script src="{{ asset('js/ajax/loadSweetAlertScript.js') }}"></script>
     <script>
         /*
-        |************************************************|
-        |** Function to display error using SweetAlert **|
-        |************************************************|
-        */
+            |************************************************|
+            |** Function to display error using SweetAlert **|
+            |************************************************|
+            */
         function displayError(errors) {
             var errorMessage = '';
 
@@ -64,14 +63,14 @@
         |************************************************|
         */
         function successMessage(success, redirect) {
-            if(success !==''){
+            if (success !== '') {
                 Swal.fire({
                     position: "center",
                     icon: "success",
                     title: success,
                     showConfirmButton: false,
                     timer: 1500
-                }).then(function(){
+                }).then(function() {
                     window.location.href = redirect;
                 });
             }

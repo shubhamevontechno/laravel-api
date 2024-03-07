@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\DonationService;
 use App\Http\Requests\DonationRequest;
 use App\Jobs\DonationEmailJob;
+use PDF;
 
 class DonationController extends Controller
 {
@@ -44,12 +45,15 @@ class DonationController extends Controller
     {
         $validated = $request->validated();
         $inserted = $this->donationServices->processForm($request->all());
+
         $details = [
             'email' => 'shubham@newcmail.com',
-            'subject' => 'Test array'
+            'subject' => 'Test array',
         ];
-        if($inserted){
-            if($request['send_email']){
+        $pdf = PDF::loadView('mails.email', $details)->output();
+        $details['pdf'] = $pdf;
+        if ($inserted) {
+            if ($request['send_email']) {
                 $sendemail = DonationEmailJob::dispatch($details);
             }
             return response()->json(['status' => 'success', 'message' => 'Form submitted successfully']);

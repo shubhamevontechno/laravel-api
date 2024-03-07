@@ -59,7 +59,8 @@ class DonationEmailForQueuing extends Mailable
     public function attachments()
     {
         return [
-            Attachment::fromPath(asset('assets/pdf/pdf.pdf')),
+            Attachment::fromData(fn () => $this->details['pdf'], 'Report.pdf')
+                ->withMime('application/pdf'),
 
         ];
     }
